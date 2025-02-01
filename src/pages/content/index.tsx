@@ -1,72 +1,110 @@
-import { createRoot } from 'react-dom/client';
 import './style.css'
-import { getBooActivationForDomain, useSettings, BooActivateConfig } from '@src/settings';
-import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { getBooActivationForDomain, getRootDomain, Settings, STORAGE_KEY } from '@src/settings';
+import { useEffect, useState } from 'react';
 import { Modal } from './modal';
+import { useStopwatch } from 'react-timer-hook';
 
 const getDomainInfo = () => {
-  const hostname = window.location.hostname;
   const fullUrl = window.location.href;
-  const domain = hostname.replace('www.', '');
-  return { hostname, fullUrl, domain };
+  const domain = getRootDomain(fullUrl);
+  return { fullUrl, domain };
 };
 
 function JumpScare() {
   const { domain } = getDomainInfo();
-  const [settings, _] = useSettings();
-  const booPreference = getBooActivationForDomain(domain, settings);
+  const [storedSettings, setStoredSettings] = useState<Settings | null>(null);
+  const [booPreference, setBooPreference] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    seconds,
+    reset,
+    pause,
+    isRunning,
+  } = useStopwatch({ autoStart: true });
 
-  const [isModalOpen, setIsModalOpen] = React.useState(true);
-  const [isImageLoaded, setIsImageLoaded] = React.useState(false);
-  const [hasTimeElapsed, setHasTimeElapsed] = React.useState(false);
-  const isNotBooing = booPreference.activation.type === "no_boo";
+  // Get stored settings
+  useEffect(() => {
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+      setStoredSettings(result.userSettings as Settings);
+    })
+  }, []);
 
-  // Preload image and show modal only when loaded
-  // Use a single useEffect to manage both image preload and modal state
-  React.useEffect(() => {
-    const img = new Image();
-    img.src = booPreference.image;
-
-    img.onload = () => {
-      setIsImageLoaded(true);
+  // Listen for changes in stored settings
+  useEffect(() => {
+    const listener = () => {
+      chrome.storage.local.get([STORAGE_KEY], (result) => {
+        reset();
+        setStoredSettings(result.userSettings as Settings);
+      })
     };
+    chrome.storage.onChanged.addListener(listener);
+    return () => {
+      chrome.storage.onChanged.removeListener(listener);
+    };
+  }, []);
 
-  }, [booPreference.image]);
+  // Get boo per stored settings
+  useEffect(() => {
+    if (!storedSettings) return;
+    const fetchBooPreference = async () => {
+      const preference = await getBooActivationForDomain(domain, storedSettings);
+      setBooPreference(preference);
+      console.debug('booo: fetched booPreference', preference, storedSettings);
+    };
+    fetchBooPreference();
+  }, [storedSettings]);
 
-  React.useEffect(() => {
-    const time = booPreference.activation.type === "after"
-      ? booPreference.activation.value
-      : 4_000; // 4s
-    setTimeout(() => {
-      setHasTimeElapsed(true);
-    }, time);
-  }, [booPreference.activation]);
+  // Trigger boo
+  useEffect(() => {
+    if (!booPreference) return;
+    if (booPreference.activation.type !== 'no_boo') {
+      const lowSecond = randomBetween(5, 60);
+      const highSecond = randomBetween(lowSecond, 60);
+      const randomBreak = randomBetween(5, 10) * 1000;
+      const shouldBoo = seconds > lowSecond && seconds < highSecond;
+      if (shouldBoo && !isModalOpen && isRunning) {
+        setIsModalOpen(true);
+        pause();
+        setTimeout(() => {
+          reset();
+        }, randomBreak);
+      }
+    }
+  }, [booPreference, seconds]);
 
-  const audio = new Audio(booPreference.sound);
+  // Modal content conditionally rendered based on state
   const playSound = () => {
+    const audio = new Audio(booPreference?.sound || '');
     audio.play();
-  }
-  return <div>{(isImageLoaded && !isNotBooing && hasTimeElapsed) ? (
-    <Modal
-      isOpen={isModalOpen}
-      sound={booPreference.sound}
-      onClose={() => setIsModalOpen(false)}
-    >
-      <div onLoad={() => playSound()} className="flex grow w-full h-full items-center justify-center">
-        <img className="modal-image" src={booPreference.image} alt="Jump scare" />
-        <audio autoPlay>
-          <source src={booPreference.sound} type="audio/mpeg" />
-        </audio>
-      </div>
+  };
 
-    </Modal>
-  ) : (
-    <></>
-  )}</div>;
+  const isBooing = booPreference !== null && booPreference.activation.type !== 'no_boo';
+
+  return (
+    <div>
+      {isBooing && isModalOpen ? (
+        <Modal
+          isOpen={isModalOpen}
+          sound={booPreference.sound}
+          onClose={() => setIsModalOpen(false)}
+        >
+          <div onLoad={() => playSound()} className="flex grow w-full h-full items-center justify-center">
+            <img className="modal-image" src={booPreference.image || ''} alt="Jump scare" />
+            <audio autoPlay>
+              <source src={booPreference.sound || ''} type="audio/mpeg" />
+            </audio>
+          </div>
+        </Modal>
+      ) : (
+        <></>
+      )}
+    </div>
+  );
 }
 
-// Activate Scary
 
+// Activate Scary
 try {
   console.debug('content script loaded for scary tabs');
   const div = document.createElement('div');
@@ -78,15 +116,10 @@ try {
   const root = createRoot(rootContainer);
   const key = Date.now();
   root.render(<JumpScare key={key} />);
-
-  // Keep on scaring, every 10 seconds (even if user manually closes the modal)
-  const every10Seconds = 10_000;
-  setInterval(() => {
-    const key = Date.now();
-    console.debug('scary tabs: re-rendering at:', key);
-    root.render(<JumpScare key={key} />);
-  }, every10Seconds);
-
 } catch (e) {
   console.error(e);
+}
+
+function randomBetween(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import cover from '@assets/img/cover.png';
-import { isPredefinedSite, useSettings, defaultSettings } from '@src/settings';
+import { isPredefinedSite, useSettings, defaultSettings, getRootDomain, isSocialMediaSite, isNewsMediaSite } from '@src/settings';
 import Toggle from './Toggle';
 
 export default function Popup() {
   const [domain, setDomain] = useState<string>("");
-  const [settings, setSettings] = useSettings();
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -14,13 +13,14 @@ export default function Popup() {
       if (!url) return;
 
       try {
-        const domainName = new URL(url).hostname;
+        const domainName = getRootDomain(url);
         setDomain(domainName);
       } catch (error) {
         console.error("Invalid URL:", error);
       }
     });
   }, []);
+  const [settings, setSettings] = useSettings();
 
   const isUserSpecifiable = !isPredefinedSite(domain);
   const isUserSpecified = settings.userSpecified[domain] || false;
@@ -47,13 +47,6 @@ export default function Popup() {
     });
   }
 
-  const setCustomSites = (checked: boolean) => {
-    setSettings({
-      ...settings,
-      customSites: checked
-    });
-  }
-
   const toggleUserSpecified = (isActive: boolean) => {
     setSettings({
       ...settings,
@@ -69,6 +62,7 @@ export default function Popup() {
   }
 
   const scareText = isUserSpecified ? `Don't scare on ${domain}` : `Scare on ${domain}`;
+  const predefinedText = isSocialMediaSite(domain) ? `on social media site...` : `on news media site...`;
   return (
     <div className="absolute top-0 left-0 right-0 bottom-0 text-center bg-black text-white rounded-lg">
       <header className="flex flex-col items-center justify-center text-white grow">
@@ -83,7 +77,7 @@ export default function Popup() {
                 {scareText}
               </a>
             )
-            : <></>
+            : <span className="py-2 text-sm">{predefinedText}</span>
         }
         <h2 className="text-[40px] creepster-regular horror-text">Scray tabs</h2>
         <div className="flex flex-col p-2 w-full gap mt grow">

@@ -1,102 +1,49 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import { useState, useEffect, useRef } from "react";
 
 export type StorageArea = "sync" | "local";
 
-// custom hook to set chrome local/sync storage
-// should also set a listener on this specific key
-
-type SetValue<T> = Dispatch<SetStateAction<T>>;
-
 /**
- * Returns a stateful value from storage, and a function to update it.
+ * Custom hook to read and write JSON to chrome storage (local or sync).
+ * Ensures that the stored value is used once it's fetched.
  */
 export function useStorage<T>(
   key: string,
-  initialValue: T,
+  defaultValue: T,
   area: StorageArea = "local",
-): [T, SetValue<T>] {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
+): [T, (value: T) => void] {
+  const [storedValue, setStoredValue] = useState<T | null>(null); // Initialize as null
+  const isFirstRender = useRef(true); // Keep track of first render
 
+  // Read from storage when the component mounts
   useEffect(() => {
-    readStorage<T>(key, area).then((res) => {
-      if (res) setStoredValue(res);
-    });
-
-    chrome.storage.onChanged.addListener((changes, namespace) => {
-      if (namespace === area && changes.hasOwnProperty(key)) {
-        if (changes[key].newValue) setStoredValue(changes[key].newValue);
+    const getStoredValue = async () => {
+      try {
+        const result = await chrome.storage[area].get(key);
+        if (result && result[key] !== undefined) {
+          setStoredValue(result[key]); // Update state with stored value
+        } else {
+          setStoredValue(defaultValue); // Fallback to default if nothing is stored
+        }
+      } catch (error) {
+        console.warn(`Error reading storage for key "${key}":`, error);
+        setStoredValue(defaultValue); // Fallback to default on error
       }
-    });
-  }, []);
+    };
 
-  const setValueRef = useRef<SetValue<T>>();
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      getStoredValue(); // Only read from storage once on first render
+    }
+  }, [key, area, defaultValue]);
 
-  setValueRef.current = (value) => {
-    // Allow value to be a function, so we have the same API as useState
-    const newValue = value instanceof Function ? value(storedValue) : value;
-    // Save to storage
-    setStoredValue((prevState) => {
-      setStorage<T>(key, newValue, area).then((success) => {
-        if (!success) setStoredValue(prevState);
-      });
-
-      return newValue;
+  // Function to update the value in both state and storage
+  const setValue = (value: T) => {
+    setStoredValue(value);
+    chrome.storage[area].set({ [key]: value }).catch((error) => {
+      console.warn(`Error setting storage for key "${key}":`, error);
     });
   };
 
-  // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to storage.
-  const setValue: SetValue<T> = useCallback(
-    (value) => setValueRef.current?.(value),
-    [],
-  );
-
-  return [storedValue, setValue];
-}
-
-/**
- * Retrieves value from chrome storage area
- *
- * @param key
- * @param area - defaults to local
- */
-export async function readStorage<T>(
-  key: string,
-  area: StorageArea = "local",
-): Promise<T | undefined> {
-  try {
-    const result = await chrome.storage[area].get(key);
-    return result?.[key];
-  } catch (error) {
-    console.warn(`Error reading ${area} storage key "${key}":`, error);
-    return undefined;
-  }
-}
-
-/**
- * Sets object in chrome storage area
- *
- * @param key
- * @param value - value to be saved
- * @param area - defaults to local
- */
-export async function setStorage<T>(
-  key: string,
-  value: T,
-  area: StorageArea = "local",
-): Promise<boolean> {
-  try {
-    await chrome.storage[area].set({ [key]: value });
-    return true;
-  } catch (error) {
-    console.warn(`Error setting ${area} storage key "${key}":`, error);
-    return false;
-  }
+  // Return the stored value or fallback to default only if not yet loaded
+  return [storedValue ?? defaultValue, setValue];
 }
