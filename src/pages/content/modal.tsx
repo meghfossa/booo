@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import './Modal.css';
+import './modal.css';
 
 export const Modal = ({ isOpen, sound, hasCloseBtn = false, onClose, children }) => {
     const modalRef = useRef(null);
