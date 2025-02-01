@@ -1,6 +1,9 @@
 Scary Tabs is a browser extension that scares you after few moments when you open a tab, 
 to social media sites, or other user specified sites.
 
+![Demo](./demo.png)
+
+
 ## Development
 
 ```bash
