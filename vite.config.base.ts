@@ -10,7 +10,6 @@ import devManifest from "./manifest.dev.json";
 import pkg from "./package.json";
 
 const isDev = process.env.__DEV__ === "true";
-// set this flag to true, if you want localization support
 const localize = false;
 
 export const baseManifest = {
@@ -29,7 +28,6 @@ export const baseManifest = {
 export const baseBuildOptions: BuildOptions = {
   sourcemap: isDev,
   emptyOutDir: !isDev,
-  minify: !isDev,
 };
 
 export default defineConfig({

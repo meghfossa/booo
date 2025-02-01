@@ -99,7 +99,7 @@ export const isNewsMediaSite = (domain: string) => {
 const scaryImages = [
   "src/assets/scary_media/imgs/creepy_4chan_smile.jpeg",
   "src/assets/scary_media/imgs/creepy_4chan_wtf.jpeg",
-  "src/assets/scary_media/imgs/creepy_pinterest_3.png",
+  "src/assets/scary_media/imgs/creepy_pinterest_3.jpg",
   "src/assets/scary_media/imgs/creepy_pinterest_2.jpg",
   "src/assets/scary_media/imgs/creepy_pinterest_1.jpg",
   "src/assets/scary_media/imgs/creepy_pinterest_4.jpg",
