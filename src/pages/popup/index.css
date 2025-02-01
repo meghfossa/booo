@@ -1,12 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Creepster&family=Mountains+of+Christmas:wght@400;700&family=Schoolbell&display=swap');
+
 body {
-  width: 300px;
-  height: 260px;
+  width: 200px;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000;
 
   position: relative;
+}
+
+/* Google Fonts */
+
+.creepster-regular {
+  font-family: "Creepster", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.schoolbell-regular {
+  font-family: "Schoolbell", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.mountains-of-christmas-regular {
+  font-family: "Mountains of Christmas", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.mountains-of-christmas-bold {
+  font-family: "Mountains of Christmas", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.bubblegum-sans-regular {
+  font-family: "Bubblegum Sans", serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* shape */
+
+.wiggly-box {
+  --r: 5px;
+  width: 100%;
+  /* radius of circles */
+  padding: calc(1.5*var(--r));
+  z-index: 1;
+  background: #ffffff;
+  mask:
+    linear-gradient(#000 0 0) no-repeat 50%/calc(100% - 2*var(--r)) calc(100% - 2*var(--r)),
+    radial-gradient(farthest-side, #000 97%, #0000) 0 0/calc(2*var(--r)) calc(2*var(--r)) round;
+}
+
+.horror-text {
+  animation-duration: 2.5s;
+  animation-iteration-count: infinite;
+  animation-name: flickering;
+  animation-timing-function: step-start;
+  color: red;
+}
+
+@keyframes flickering {
+  0% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  5% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  10% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(-15deg);
+  }
+
+  15% {
+    color: #ccc;
+    text-shadow: none;
+    transform: skewX(-15deg);
+  }
+
+  20% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  25% {
+    color: #ccc;
+    text-shadow: 2px 2px red;
+    transform: skewX(0);
+  }
+
+  30% {
+    color: #ccc;
+    text-shadow: 2px 2px red;
+    transform: skewX(0);
+  }
+
+  35% {
+    color: #ccc;
+    text-shadow: 2px 2px red;
+    transform: skewX(0);
+  }
+
+  37% {
+    color: #ccc;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  40% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  45% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  50% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  55% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  60% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  65% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  68% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  70% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  75% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(10deg);
+  }
+
+  80% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(10deg);
+  }
+
+  85% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(10deg);
+  }
+
+  90% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
+
+  95% {
+    color: red;
+    text-shadow: 1px 1px #eee;
+    transform: skewX(0);
+  }
+
+  100% {
+    color: red;
+    text-shadow: none;
+    transform: skewX(0);
+  }
 }
