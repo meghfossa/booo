@@ -1,8 +1,8 @@
 'use client'
 
 import { Field, Label, Switch } from '@headlessui/react'
-
-export default function Toggle({ text, checked, onChange }: { text: string, checked: boolean, onChange: (checked: boolean) => void }) {
+import React from 'react'
+export default function Toggle({ text, checked, onChange }: { text: string | React.ReactNode, checked: boolean, onChange: (checked: boolean) => void }) {
     return (
         <Field className="flex items-center w-full justify-between">
             <Switch

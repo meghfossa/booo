@@ -46,7 +46,6 @@ function JumpScare() {
   const playSound = () => {
     audio.play();
   }
-  console.log('isModalOpen', isModalOpen);
   return <div>{(isImageLoaded && !isNotBooing && hasTimeElapsed) ? (
     <Modal
       isOpen={isModalOpen}
@@ -69,7 +68,7 @@ function JumpScare() {
 // Activate Scary
 
 try {
-  console.log('content script loaded');
+  console.debug('content script loaded for scary tabs');
   const div = document.createElement('div');
   div.id = '__scary_tabs';
   document.body.appendChild(div);
@@ -84,7 +83,7 @@ try {
   const every10Seconds = 10_000;
   setInterval(() => {
     const key = Date.now();
-    console.log('re-rendering at:', key);
+    console.debug('scary tabs: re-rendering at:', key);
     root.render(<JumpScare key={key} />);
   }, every10Seconds);
 

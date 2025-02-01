@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import cover from '@assets/img/cover.png';
-import { getBooActivationForDomain, isPredefinedSite, useSettings, defaultSettings } from '@src/settings';
+import { isPredefinedSite, useSettings, defaultSettings } from '@src/settings';
 import Toggle from './Toggle';
 
 export default function Popup() {
@@ -108,7 +108,7 @@ export default function Popup() {
       </header>
       <footer className="flex flex-row justify-between px-2 pb-1">
         <a className="text-white underline" href="#" onClick={resetSettings}>Reset everything!</a>
-        <a className="text-white underline" href="#">Code!</a>
+        <a className="text-white underline" href="https://github.com/meghfossa/booo">Code</a>
       </footer>
     </div>
   );

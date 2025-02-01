@@ -1,1 +1,1 @@
-console.log('background script loaded');
+console.debug("background script loaded for scary tabs");
