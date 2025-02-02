@@ -16,10 +16,10 @@
     "activeTab",
     "storage"
   ],
-  "host_permissions": [
-    "https://*/*",
-    "http://*/*"
-  ],
+  "host_permissions": [],
+  "background": {
+    "service_worker": "src/pages/background/index.ts"
+  },
   "content_scripts": [
     {
       "matches": [
