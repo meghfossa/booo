@@ -71,6 +71,15 @@ const SocialMediaSites = new Set([
   "linkedin.com",
   "pinterest.com",
   "reddit.com",
+  "x.com",
+  "tiktok.com",
+  "youtube.com",
+  "twitch.tv",
+  "discord.com",
+  "snapchat.com",
+  "whatsapp.com",
+  "telegram.org",
+  "twitch.tv",
 ]);
 
 const NewsMediaSites = new Set([
@@ -79,6 +88,13 @@ const NewsMediaSites = new Set([
   "bbc.com",
   "cnn.com",
   "foxnews.com",
+  "cnbc.com",
+  "bloomberg.com",
+  "reuters.com",
+  "theguardian.com",
+  "thetimes.co.uk",
+  "telegraph.co.uk",
+  "ft.com",
 ]);
 
 export const isPredefinedSite = (domain: string) => {
