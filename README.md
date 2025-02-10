@@ -3,7 +3,7 @@ to social media sites, or other user specified sites.
 
 ![Front Page](./front.jpg)
 
-# Extension Store
+## Extension Store
 
 - [Chrome](https://chromewebstore.google.com/detail/scarytabs/agnfkibbaokacgdlfmpjnjgbfhabmnoo?hl=en-US&authuser=1)
 
