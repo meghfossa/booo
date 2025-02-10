@@ -2,7 +2,7 @@
 
 import { Field, Label, Switch } from '@headlessui/react'
 import React from 'react'
-export default function Toggle({ text, checked, onChange }: { text: string | React.ReactNode, checked: boolean, onChange: (checked: boolean) => void }) {
+export default function Toggle({ text, checked, onChange, onClick }: { text: string | React.ReactNode, checked: boolean, onChange: (checked: boolean) => void, onClick: () => void }) {
     return (
         <Field className="flex items-center w-full justify-between">
             <Switch
@@ -16,7 +16,7 @@ export default function Toggle({ text, checked, onChange }: { text: string | Rea
                 />
             </Switch>
             <Label as="span" className="ml-3">
-                <span>{text}</span>{' '}
+                <span onClick={onClick} className={onClick === undefined ? "underline" : undefined}>{text}</span>{' '}
             </Label>
         </Field>
     )

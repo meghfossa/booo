@@ -61,6 +61,10 @@ export default function Popup() {
     setSettings(defaultSettings);
   }
 
+  const openLink = (url: string) => {
+    chrome.tabs.create({ url });
+  }
+
   const scareText = isUserSpecified ? `Don't scare on ${domain}` : `Scare on ${domain}`;
   const predefinedText = isSocialMediaSite(domain) ? `on social media site...` : `on news media site...`;
   return (
@@ -82,8 +86,8 @@ export default function Popup() {
         <h2 className="text-[40px] creepster-regular horror-text">Scray tabs</h2>
         <div className="flex flex-col p-2 w-full gap mt grow">
           <div className="text-lg text-black flex grow flex-col gap p-2 rounded-lg solid border-2 border-white bubblegum-sans-regular wiggly-box text-lg">
-            <Toggle text="Social Media" checked={settings.socialWebsite} onChange={setSocialWebsite} />
-            <Toggle text="News Media" checked={settings.newsWebsite} onChange={setNewsWebsite} />
+            <Toggle text="Social Media" checked={settings.socialWebsite} onChange={setSocialWebsite} onClick={() => openLink("https://github.com/meghfossa/booo/blob/main/src/settings.ts#L67")} />
+            <Toggle text="News Media" checked={settings.newsWebsite} onChange={setNewsWebsite} onClick={() => openLink("https://github.com/meghfossa/booo/blob/main/src/settings.ts#L85")} />
             <h4 className="underline text-indigo-900">{`+ (${countOfUserSpecified}) Sites specified`}</h4>
           </div>
 
@@ -102,7 +106,7 @@ export default function Popup() {
       </header>
       <footer className="flex flex-row justify-between px-2 pb-1">
         <a className="text-white underline" href="#" onClick={resetSettings}>Reset everything!</a>
-        <a className="text-white underline" href="https://github.com/meghfossa/booo">Code</a>
+        <a className="text-white underline" href="#" onClick={() => openLink("https://github.com/meghfossa/booo")}>Code</a>
       </footer>
     </div>
   );
